@@ -20,7 +20,7 @@ class Cell {
 
     data = new Array(9);
 
-    constructor() { 
+    constructor() {
         this.data.fill(undefined)
     }
 
@@ -46,7 +46,7 @@ class Cell {
         return hasProblems(this.data);
     }
 
-    isFull(){
+    isFull() {
         return this.data.every(it => it !== undefined);
     }
 }
@@ -74,7 +74,7 @@ class Puzzle {
         return this.getCell(x, y).set(x % 3, y % 3, value);
     }
 
-    isFull(){
+    isFull() {
         return this.cells.every(c =>
             c.isFull());
     }
@@ -129,13 +129,13 @@ class Solver {
         this.state.pop();
     }
 
-    getState(){
+    getState() {
         return this.state;
     }
 
     nextEmptyField() {
-        for (let x = 0; x < 9; x++) {
-            for (let y = 0; y < 9; y++) {
+        for (let y = 0; y < 9; y++) {
+            for (let x = 0; x < 9; x++) {
                 if (this.puzzle.get(x, y) == undefined) {
                     return [x, y];
                 }
