@@ -2,8 +2,12 @@
 const puzzle = new Puzzle();
 let solver;
 let slider;
+let running = false;
+
 
 let fixed = {};
+
+const CELL_WIDTH = 30;
 
 let start = [
   '-1547-269',
@@ -31,9 +35,29 @@ function setup() {
     }
   }
 
+  const y = 9*CELL_WIDTH+30;
   slider = createSlider(1, 100, 25);
-  slider.position(10, 350);
-  slider.style('width', '250px');
+  slider.position(150, y);
+  slider.style('width', '150px');
+
+  let playButton = createButton('solve ');
+  let stepButton = createButton('step')
+  playButton.position(20, y);
+  playButton.mousePressed(() => {
+    running = !running;
+
+    playButton.html(running ? 'pause' : 'solve ');
+    if (running) {
+      stepButton.attribute('disabled', '');
+    } else {
+      stepButton.removeAttribute('disabled');
+    }
+  });
+
+  stepButton.position(75, y);
+  stepButton.mousePressed(() => {
+    solver.step();
+  });
 }
 
 function drawStack() {
@@ -43,8 +67,7 @@ function drawStack() {
   const state = solver.getState();
   for (let i = 0; i < state.length; i++) {
     const s = state[i];
-    text(`${i}. ${JSON.stringify(s)}`, 0, -i * 15);
-
+    text(`${('' + i).padStart(2, '0')}.     x: ${s.x}, y: ${s.y}, ${JSON.stringify(s.numbers)}`, 0, -i * 15);
   }
   pop();
 
@@ -56,11 +79,20 @@ function draw() {
   let solved = false;
 
   frameRate(slider.value());
-  for (let i = 0; i < 1; i++) {
+  if (running) {
     solved = solver.step();
-
   }
 
+  drawRaster();
+  drawHighlighter();
+  drawStack();
+
+  if (solved) {
+    frameRate(0);
+  }
+}
+
+function drawRaster() {
   push();
   for (let y = 0; y < 3 * 3; y++) {
     for (let x = 0; x < 3 * 3; x++) {
@@ -72,38 +104,34 @@ function draw() {
 
       const c = puzzle.get(x, y);
       push();
-      translate(x * 30, y * 30);
-      rect(0, 0, 30);
+      translate(x * CELL_WIDTH, y * CELL_WIDTH);
+      rect(0, 0, CELL_WIDTH);
       fill('black');
       text(c ? c : '', 12, 15);
-      pop()
+      pop();
     }
   }
 
+  // draw 3by3 Raster
   for (let x = 0; x < 3; x++) {
     for (let y = 0; y < 3; y++) {
       strokeWeight(3);
       stroke('black');
       noFill();
-      rect(x * 90, y * 90, 90);
+      rect(x * 3*CELL_WIDTH, y * 3*CELL_WIDTH, 3*CELL_WIDTH);
     }
   }
-
-
   pop();
-  drawStack();
+}
 
+function drawHighlighter() {
   const top = solver.getState()[solver.getState().length - 1];
   push();
   stroke('red');
   noFill();
   strokeWeight(2);
-  translate(top.x * 30, top.y * 30);
-  rect(0, 0, 30);
+  translate(top.x * CELL_WIDTH, top.y * CELL_WIDTH);
+  rect(0, 0, CELL_WIDTH);
   pop();
-
-  if (solved) {
-    frameRate(0);
-  }
 }
 
