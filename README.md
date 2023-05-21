@@ -1,7 +1,7 @@
 # p5SudokuSolver
 
 Visualization of a back-tracking, recursive sudoku solver.
-It vizualizse the call-stack while solving and allows for pausing and single-stepping.
+It shows the call-stack while solving and allows for pausing and single-stepping.
 
 uses [p5.js](https://p5js.org/)
 see here https://riederm.github.io/p5SudokuSolver/
